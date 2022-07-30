@@ -1,0 +1,271 @@
+
+exports[`serialize/deserialize works 1`] = `"{\\"$r\\":1,\\"$t\\":\\"Object\\",\\"$v\\":{\\"a\\":123,\\"b\\":{\\"$r\\":2,\\"$t\\":\\"Foo\\",\\"$v\\":{\\"a\\":2}},\\"c\\":{\\"$r\\":3,\\"$t\\":\\"Date\\",\\"$v\\":\\"1970-01-01T00:00:00.123Z\\"}}}"`;
+
+exports[`serialize/deserialize works 2`] = `
+Object {
+  "a": 123,
+  "b": Object {
+    "a": 2,
+  },
+  "c": 1970-01-01T00:00:00.123Z,
+}
+`;
+
+exports[`serialize/deserialize preserves references 1`] = `"{\\"$r\\":1,\\"$t\\":\\"Object\\",\\"$v\\":{\\"a\\":123,\\"b\\":{\\"$r\\":2,\\"$t\\":\\"Foo\\",\\"$v\\":{\\"a\\":2}},\\"c\\":{\\"$r\\":3,\\"$t\\":\\"Date\\",\\"$v\\":\\"1970-01-01T00:00:00.123Z\\"},\\"d\\":{\\"$p\\":2}}}"`;
+
+exports[`serialize/deserialize preserves references 2`] = `
+Object {
+  "a": 123,
+  "b": Object {
+    "a": 2,
+  },
+  "c": 1970-01-01T00:00:00.123Z,
+  "d": Object {
+    "a": 2,
+  },
+}
+`;
+
+exports[`serialize/deserialize common types 1`] = `"{\\"$r\\":1,\\"$t\\":\\"Object\\",\\"$v\\":{\\"a\\":123,\\"b\\":{\\"$r\\":2,\\"$t\\":\\"Date\\",\\"$v\\":\\"1970-01-01T00:00:00.123Z\\"},\\"c\\":{\\"$r\\":3,\\"$t\\":\\"Map\\",\\"$v\\":[{\\"$r\\":4,\\"$t\\":\\"Array\\",\\"$v\\":[1,2]},{\\"$r\\":5,\\"$t\\":\\"Array\\",\\"$v\\":[3,4]}]},\\"d\\":{\\"$r\\":6,\\"$t\\":\\"Set\\",\\"$v\\":[1,2,3,4]}}}"`;
+
+exports[`serialize/deserialize common types 2`] = `
+Object {
+  "a": 123,
+  "b": 1970-01-01T00:00:00.123Z,
+  "c": Map {
+    1 => 2,
+    3 => 4,
+  },
+  "d": Set {
+    1,
+    2,
+    3,
+    4,
+  },
+}
+`;
+
+exports[`serialize/deserialize top level map 1`] = `"{\\"$r\\":1,\\"$t\\":\\"Map\\",\\"$v\\":[{\\"$r\\":2,\\"$t\\":\\"Array\\",\\"$v\\":[1,2]},{\\"$r\\":3,\\"$t\\":\\"Array\\",\\"$v\\":[3,4]}]}"`;
+
+exports[`serialize/deserialize top level map 2`] = `
+Map {
+  1 => 2,
+  3 => 4,
+}
+`;
+
+exports[`serialize/deserialize refs in maps and sets 1`] = `"{\\"$r\\":1,\\"$t\\":\\"Object\\",\\"$v\\":{\\"a\\":{\\"$r\\":2,\\"$t\\":\\"Object\\",\\"$v\\":{\\"hello\\":\\"world\\"}},\\"b\\":{\\"$r\\":3,\\"$t\\":\\"Date\\",\\"$v\\":\\"1970-01-01T00:00:00.123Z\\"},\\"c\\":{\\"$r\\":4,\\"$t\\":\\"Map\\",\\"$v\\":[{\\"$r\\":5,\\"$t\\":\\"Array\\",\\"$v\\":[1,{\\"$p\\":2}]},{\\"$r\\":6,\\"$t\\":\\"Array\\",\\"$v\\":[2,{\\"$r\\":7,\\"$t\\":\\"Array\\",\\"$v\\":[1,2,3]}]}]},\\"d\\":{\\"$r\\":8,\\"$t\\":\\"Set\\",\\"$v\\":[1,2,{\\"$p\\":2},4]},\\"e\\":{\\"$p\\":7},\\"f\\":{\\"$r\\":9,\\"$t\\":\\"Array\\",\\"$v\\":[1,2,{\\"$p\\":2}]}}}"`;
+
+exports[`serialize/deserialize refs in maps and sets 2`] = `
+Object {
+  "a": Object {
+    "hello": "world",
+  },
+  "b": 1970-01-01T00:00:00.123Z,
+  "c": Map {
+    1 => [Circular],
+    2 => Array [
+      1,
+      2,
+      3,
+    ],
+  },
+  "d": Set {
+    1,
+    2,
+    [Circular],
+    4,
+  },
+  "e": Array [
+    1,
+    2,
+    3,
+  ],
+  "f": Array [
+    1,
+    2,
+    [Circular],
+  ],
+}
+`;
+
+exports[`serialize/deserialize refs in maps keys 1`] = `"{\\"$r\\":1,\\"$t\\":\\"Object\\",\\"$v\\":{\\"a\\":{\\"$r\\":2,\\"$t\\":\\"Map\\",\\"$v\\":[{\\"$r\\":3,\\"$t\\":\\"Array\\",\\"$v\\":[{\\"$r\\":4,\\"$t\\":\\"Object\\",\\"$v\\":{\\"hello\\":\\"world\\"}},{\\"$r\\":5,\\"$t\\":\\"Object\\",\\"$v\\":{\\"one\\":\\"two\\"}}]}]}}}"`;
+
+exports[`serialize/deserialize refs in maps keys 2`] = `
+Object {
+  "a": Map {
+    Object {
+      "hello": "world",
+    } => Object {
+      "one": "two",
+    },
+  },
+}
+`;
+
+exports[`serialize/deserialize cross refs 1`] = `"{\\"$r\\":1,\\"$t\\":\\"Object\\",\\"$v\\":{\\"a\\":{\\"$r\\":2,\\"$t\\":\\"Object\\",\\"$v\\":{\\"hello\\":\\"world\\",\\"bar\\":{\\"$r\\":3,\\"$t\\":\\"Object\\",\\"$v\\":{\\"one\\":\\"two\\",\\"b\\":{\\"$p\\":2}}}}},\\"b\\":{\\"$p\\":3},\\"c\\":{\\"$p\\":2},\\"d\\":{\\"$r\\":4,\\"$t\\":\\"Object\\",\\"$v\\":{\\"a\\":{\\"$p\\":2},\\"b\\":{\\"$p\\":3}}}}}"`;
+
+exports[`serialize/deserialize cross refs 2`] = `
+Object {
+  "a": Object {
+    "bar": Object {
+      "b": [Circular],
+      "one": "two",
+    },
+    "hello": "world",
+  },
+  "b": Object {
+    "b": [Circular],
+    "one": "two",
+  },
+  "c": Object {
+    "bar": [Circular],
+    "hello": "world",
+  },
+  "d": Object {
+    "a": [Circular],
+    "b": [Circular],
+  },
+}
+`;
+
+exports[`serialize/deserialize array 1`] = `"{\\"$r\\":1,\\"$t\\":\\"Array\\",\\"$v\\":[{\\"$r\\":2,\\"$t\\":\\"Object\\",\\"$v\\":{\\"a\\":123,\\"b\\":{\\"$r\\":3,\\"$t\\":\\"Date\\",\\"$v\\":\\"1970-01-01T00:00:00.123Z\\"},\\"c\\":{\\"$r\\":4,\\"$t\\":\\"Map\\",\\"$v\\":[{\\"$r\\":5,\\"$t\\":\\"Array\\",\\"$v\\":[1,2]},{\\"$r\\":6,\\"$t\\":\\"Array\\",\\"$v\\":[3,4]}]},\\"d\\":{\\"$r\\":7,\\"$t\\":\\"Set\\",\\"$v\\":[1,2,3,4]}}}]}"`;
+
+exports[`serialize/deserialize array 2`] = `
+Array [
+  Object {
+    "a": 123,
+    "b": 1970-01-01T00:00:00.123Z,
+    "c": Map {
+      1 => 2,
+      3 => 4,
+    },
+    "d": Set {
+      1,
+      2,
+      3,
+      4,
+    },
+  },
+]
+`;
+
+exports[`serialize/deserialize plugs and cables 1`] = `"{\\"$r\\":1,\\"$t\\":\\"Object\\",\\"$v\\":{\\"output\\":{\\"$r\\":2,\\"$t\\":\\"Plug\\",\\"$v\\":{\\"plugKind\\":\\"output\\",\\"cableKind\\":\\"audio\\",\\"cables\\":{\\"$r\\":3,\\"$t\\":\\"Map\\",\\"$v\\":[{\\"$r\\":4,\\"$t\\":\\"Array\\",\\"$v\\":[{\\"$r\\":5,\\"$t\\":\\"Cable\\",\\"$v\\":{\\"outputCh\\":0,\\"inputCh\\":0}},{\\"$r\\":6,\\"$t\\":\\"Plug\\",\\"$v\\":{\\"plugKind\\":\\"input\\",\\"cableKind\\":\\"audio\\",\\"cables\\":{\\"$r\\":7,\\"$t\\":\\"Map\\",\\"$v\\":[{\\"$r\\":8,\\"$t\\":\\"Array\\",\\"$v\\":[{\\"$p\\":5},{\\"$p\\":2}]}]},\\"plugs\\":{\\"$r\\":9,\\"$t\\":\\"Map\\",\\"$v\\":[{\\"$r\\":10,\\"$t\\":\\"Array\\",\\"$v\\":[{\\"$p\\":2},{\\"$p\\":5}]}]},\\"allPlugs\\":{\\"$r\\":11,\\"$t\\":\\"Set\\",\\"$v\\":[{\\"$p\\":2}]},\\"allCables\\":{\\"$r\\":12,\\"$t\\":\\"Set\\",\\"$v\\":[{\\"$p\\":5}]}}}]}]},\\"plugs\\":{\\"$r\\":13,\\"$t\\":\\"Map\\",\\"$v\\":[{\\"$r\\":14,\\"$t\\":\\"Array\\",\\"$v\\":[{\\"$p\\":6},{\\"$p\\":5}]}]},\\"allPlugs\\":{\\"$r\\":15,\\"$t\\":\\"Set\\",\\"$v\\":[{\\"$p\\":6}]},\\"allCables\\":{\\"$r\\":16,\\"$t\\":\\"Set\\",\\"$v\\":[{\\"$p\\":5}]}}},\\"input\\":{\\"$p\\":6}}}"`;
+
+exports[`serialize/deserialize plugs and cables 2`] = `
+Object {
+  "input": Plug {
+    "allCables": Set {
+      Cable {
+        "inputCh": 0,
+        "outputCh": 0,
+      },
+    },
+    "allPlugs": Set {
+      Plug {
+        "allCables": Set {
+          Cable {
+            "inputCh": 0,
+            "outputCh": 0,
+          },
+        },
+        "allPlugs": Set {
+          [Circular],
+        },
+        "cableKind": "audio",
+        "cables": Map {
+          Cable {
+            "inputCh": 0,
+            "outputCh": 0,
+          } => [Circular],
+        },
+        "plugKind": "output",
+        "plugs": Map {
+          [Circular] => Cable {
+            "inputCh": 0,
+            "outputCh": 0,
+          },
+        },
+      },
+    },
+    "cableKind": "audio",
+    "cables": Map {
+      Cable {
+        "inputCh": 0,
+        "outputCh": 0,
+      } => Plug {
+        "allCables": Set {
+          [Circular],
+        },
+        "allPlugs": Set {
+          [Circular],
+        },
+        "cableKind": "audio",
+        "cables": Map {
+          [Circular] => [Circular],
+        },
+        "plugKind": "output",
+        "plugs": Map {
+          [Circular] => [Circular],
+        },
+      },
+    },
+    "plugKind": "input",
+    "plugs": Map {
+      Plug {
+        "allCables": Set {
+          Cable {
+            "inputCh": 0,
+            "outputCh": 0,
+          },
+        },
+        "allPlugs": Set {
+          [Circular],
+        },
+        "cableKind": "audio",
+        "cables": Map {
+          Cable {
+            "inputCh": 0,
+            "outputCh": 0,
+          } => [Circular],
+        },
+        "plugKind": "output",
+        "plugs": Map {
+          [Circular] => Cable {
+            "inputCh": 0,
+            "outputCh": 0,
+          },
+        },
+      } => Cable {
+        "inputCh": 0,
+        "outputCh": 0,
+      },
+    },
+  },
+  "output": Plug {
+    "allCables": Set {
+      Cable {
+        "inputCh": 0,
+        "outputCh": 0,
+      },
+    },
+    "allPlugs": Set {
+      [Circular],
+    },
+    "cableKind": "audio",
+    "cables": Map {
+      Cable {
+        "inputCh": 0,
+        "outputCh": 0,
+      } => [Circular],
+    },
+    "plugKind": "output",
+    "plugs": Map {
+      [Circular] => Cable {
+        "inputCh": 0,
+        "outputCh": 0,
+      },
+    },
+  },
+}
+`;
