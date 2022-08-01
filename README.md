@@ -1,5 +1,5 @@
 <h1>
-serialize-whatever <a href="https://npmjs.org/package/serialize-whatever"><img src="https://img.shields.io/badge/npm-v0.0.1-F00.svg?colorA=000"/></a> <a href="src"><img src="https://img.shields.io/badge/loc-141-FFF.svg?colorA=000"/></a> <a href="https://cdn.jsdelivr.net/npm/serialize-whatever@0.0.1/dist/serialize-whatever.min.js"><img src="https://img.shields.io/badge/brotli-786b-333.svg?colorA=000"/></a> <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-F0B.svg?colorA=000"/></a>
+serialize-whatever <a href="https://npmjs.org/package/serialize-whatever"><img src="https://img.shields.io/badge/npm-v1.0.0-F00.svg?colorA=000"/></a> <a href="src"><img src="https://img.shields.io/badge/loc-141-FFF.svg?colorA=000"/></a> <a href="https://cdn.jsdelivr.net/npm/serialize-whatever@1.0.0/dist/serialize-whatever.min.js"><img src="https://img.shields.io/badge/brotli-786b-333.svg?colorA=000"/></a> <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-F0B.svg?colorA=000"/></a>
 </h1>
 
 <p></p>
