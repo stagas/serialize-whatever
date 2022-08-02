@@ -12,6 +12,9 @@ type Ptr = {
   $p: number // pointer to reference id
 }
 
+const trailingNumbersRegExp = /\d+$/g
+const stripTrailingNumbers = (x: string) => x.replace(trailingNumbersRegExp, '')
+
 export const thru = (x: any) => x
 
 export const createContext = (extraTypes: [Ctor, [AnyFn, AnyFn]][] = []) => {
@@ -24,7 +27,7 @@ export const createContext = (extraTypes: [Ctor, [AnyFn, AnyFn]][] = []) => {
     ...extraTypes,
   ] as [Ctor, [AnyFn, AnyFn]][])
 
-  const TypesMap = [...Types.keys()].map(x => [x.name, x])
+  const TypesMap = [...Types.keys()].map(x => [stripTrailingNumbers(x.name), x])
 
   let pointer = 0
   const ptrs = new Map<object, Ptr>()
@@ -35,7 +38,7 @@ export const createContext = (extraTypes: [Ctor, [AnyFn, AnyFn]][] = []) => {
   const createEntry = (serializer: AnyFn, obj: object & { toJSON?: () => object }): Entry | Ptr =>
     ptrs.get(obj) ?? ({
       $r: (ptrs.set(obj, { $p: ++pointer } as Ptr), pointer),
-      $t: obj.constructor.name,
+      $t: stripTrailingNumbers(obj.constructor.name),
       $v: serializer(obj),
     })
 
@@ -68,7 +71,7 @@ export const createContext = (extraTypes: [Ctor, [AnyFn, AnyFn]][] = []) => {
   ) => {
     const types = new Map([
       ...TypesMap,
-      ...classes.map(x => [x.name, x]),
+      ...classes.map(x => [stripTrailingNumbers(x.name), x]),
     ] as [string, Ctor][])
 
     return function(this: any, key: string, value: any) {
