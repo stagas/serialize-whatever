@@ -1,3 +1,4 @@
+// @env browser
 import { deserialize, serialize } from '../src/serialize-whatever'
 import { Cable, Plug } from './plugs-and-cables'
 
@@ -155,6 +156,43 @@ describe('serialize/deserialize', () => {
     const str = serialize(obj)
     expect(str).toMatchSnapshot()
     const res = deserialize(str, [Plug, Cable])
+    expect(res).toMatchSnapshot()
+    expect(res).toEqual(obj)
+  })
+
+  it('quirky', () => {
+    const ref = { hello: 'world' } as any
+    const b = new Set([ref])
+    const obj = {
+      a: new Map([[b, ref]]),
+      b,
+    }
+    ref.map = obj.a
+    b.add(obj.a)
+    const str = serialize(obj)
+    expect(str).toMatchSnapshot()
+    const res = deserialize(str)
+    expect(res).toMatchSnapshot()
+    expect(res).toEqual(obj)
+  })
+
+  it('2 quirky', () => {
+    const ref = { hello: 'world' } as any
+    const b = new Map()
+    const obj = {
+      x: null,
+      a: new Map([[b, ref]]),
+      b,
+    } as any
+    obj.x = new Set([b, obj.a, ref, b, obj])
+    obj.x.add(obj.x)
+    obj.a.set(obj.x, obj.a)
+    obj.a.set(obj.x, ref)
+    b.set(ref, obj.a)
+    b.set(obj.a, ref)
+    const str = serialize(obj)
+    expect(str).toMatchSnapshot()
+    const res = deserialize(str)
     expect(res).toMatchSnapshot()
     expect(res).toEqual(obj)
   })

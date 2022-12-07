@@ -8,7 +8,7 @@ type Entry = {
   $v: any // value
 }
 
-type Ptr = {
+export type Ptr = {
   $p: number // pointer to reference id
 }
 
@@ -17,7 +17,7 @@ const stripTrailingNumbers = (x: string) => x.replace(trailingNumbersRegExp, '')
 
 export const thru = (x: any) => x
 
-export const createContext = (extraTypes: [Ctor, [AnyFn, AnyFn]][] = []) => {
+export const createContext = (extraTypes: [Ctor, [AnyFn, AnyFn]][] = [], ptrs = new Map<object, Ptr>()) => {
   const Types = new Map([
     [Object],
     [Array, [thru, thru]],
@@ -30,7 +30,6 @@ export const createContext = (extraTypes: [Ctor, [AnyFn, AnyFn]][] = []) => {
   const TypesMap = [...Types.keys()].map(x => [stripTrailingNumbers(x.name), x])
 
   let pointer = 0
-  const ptrs = new Map<object, Ptr>()
 
   const defaultSerializer = (obj: object & { toJSON?: () => object }): any =>
     obj.toJSON ? obj.toJSON() : Object.assign({}, obj)
@@ -45,7 +44,7 @@ export const createContext = (extraTypes: [Ctor, [AnyFn, AnyFn]][] = []) => {
   const replacer = (
     top: unknown,
     clear = true,
-  ) => (clear && (pointer = 0, ptrs.clear()), function(this: any, key: string): string | Entry | Ptr {
+  ) => (clear && (pointer = 0, ptrs.clear()), function (this: any, key: string): string | Entry | Ptr {
     const value = this[key]
 
     if (
@@ -74,7 +73,18 @@ export const createContext = (extraTypes: [Ctor, [AnyFn, AnyFn]][] = []) => {
       ...classes.map(x => [stripTrailingNumbers(x.name), x]),
     ] as [string, Ctor][])
 
-    return function(this: any, key: string, value: any) {
+    const getRef = (value: any, key: any, owner: any) => {
+      const { $p } = value
+      if (refs.has($p)) return refs.get($p)
+      else {
+        let queued = pending.get($p)
+        if (!queued) pending.set($p, queued = new Set())
+        queued.add([owner, key])
+        return value
+      }
+    }
+
+    return function (this: any, key: string, value: any) {
       if (typeof value === 'object' && value !== null) {
         if (value.$t) {
           const { $r, $t, $v } = value as Entry
@@ -82,12 +92,12 @@ export const createContext = (extraTypes: [Ctor, [AnyFn, AnyFn]][] = []) => {
           if (!ctor) {
             throw new TypeError(
               'Unable to deserialize object type: ' + $t
-                + `\n  Be sure to pass the class like so:\n\n    deserialize(serialized, [${$t}])`
+              + `\n  Be sure to pass the class like so:\n\n    deserialize(serialized, [${$t}])`
             )
           }
           const [, deserializer = ((x: any) => new ctor(x))] = Types.get(ctor) ?? []
 
-          const result = deserializer($v) // deserialize($v, knownTypes, refs, pending) // , knownTypes, refs, pending)
+          const result = deserializer($v)
 
           if ($t === 'Map') {
             for (const pv of pending.values()) {
@@ -102,7 +112,11 @@ export const createContext = (extraTypes: [Ctor, [AnyFn, AnyFn]][] = []) => {
                     }
                   } else if (q[1] == '1') {
                     q[1] = (value: any) => {
-                      result.set(q[0][0], value)
+                      let p = q[0][0]
+                      if (p?.$p) {
+                        p = refs.get(p.$p)
+                      }
+                      result.set(p, value)
                     }
                   }
                 }
@@ -114,12 +128,10 @@ export const createContext = (extraTypes: [Ctor, [AnyFn, AnyFn]][] = []) => {
             for (const pv of pending.values()) {
               for (const q of pv) {
                 if ($v.includes(q[0][0])) {
-                  const p = q[0][0]
-                  if (q[1] == '0') {
-                    q[1] = (value: any) => {
-                      result.add(value)
-                      result.delete(p)
-                    }
+                  const p = q[0][q[1] as any]
+                  q[1] = (value: any) => {
+                    result.add(value)
+                    result.delete(p)
                   }
                 }
               }
@@ -138,14 +150,7 @@ export const createContext = (extraTypes: [Ctor, [AnyFn, AnyFn]][] = []) => {
           }
           return result
         } else if (value.$p) {
-          const { $p } = value
-          if (refs.has($p)) return refs.get($p)
-          else {
-            let queued = pending.get($p)
-            if (!queued) pending.set($p, queued = new Set())
-            queued.add([this, key])
-          }
-          return value
+          return getRef(value, key, this)
         }
       }
       return value
